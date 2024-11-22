@@ -1,0 +1,58 @@
+@page "/autoparts/{id:int}"
+@inject AutoPartService AutoPartService
+@inject ShoppingCartService ShoppingCartService
+@inject NavigationManager NavigationManager
+
+<PageTitle>Auto Part Details</PageTitle>
+
+<h1>Auto Part Details</h1>
+
+@if (autoPart == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="card mb-4 shadow-sm">
+        <img src="@autoPart.ImageUrl" class="card-img-top" alt="@autoPart.Name" />
+        <div class="card-body">
+            <h5 class="card-title">@autoPart.Name</h5>
+            <p class="card-text">@autoPart.Description</p>
+            <p class="card-text"><strong>Price:</strong> $@autoPart.Price</p>
+            <p class="card-text"><strong>Manufacturer:</strong> @autoPart.Manufacturer</p>
+            <p class="card-text"><strong>Part Number:</strong> @autoPart.PartNumber</p>
+            <p class="card-text"><strong>Stock:</strong> @autoPart.Stock</p>
+            <p class="card-text"><strong>Specifications:</strong></p>
+            <ul>
+                <li><strong>Weight:</strong> @autoPart.Specifications.Weight</li>
+                <li><strong>Dimensions:</strong> @autoPart.Specifications.Dimensions</li>
+                <li><strong>Material:</strong> @autoPart.Specifications.Material</li>
+            </ul>
+            <button class="btn btn-primary" @onclick="AddToCart">Add to Cart</button>
+            <button class="btn btn-secondary" @onclick="GoBack">Back to List</button>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private AutoPart autoPart;
+
+    protected override async Task OnInitializedAsync()
+    {
+        autoPart = await AutoPartService.GetAutoPartByIdAsync(Id);
+    }
+
+    private void AddToCart()
+    {
+        Console.WriteLine("Add to cart");
+        ShoppingCartService.AddToCart(autoPart);
+    }
+
+    private void GoBack()
+    {
+        NavigationManager.NavigateTo("/autoparts");
+    }
+}
